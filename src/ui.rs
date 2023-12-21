@@ -93,6 +93,6 @@ pub fn ui<B: Backend>(f: &mut Frame<B>, app: &mut App) {
     // Version
     let version_area = Block::default()
         .title_alignment(Alignment::Right)
-        .title(vec![Span::from("SystemInsights v1.0.0")]);
+        .title(vec![Span::from("SystemInsights v0.1.0")]);
     f.render_widget(version_area, bottom_right);
 }
