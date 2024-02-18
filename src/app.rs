@@ -6,7 +6,7 @@ use std::{
 use sysinfo::{System, SystemExt};
 use tui::{backend::Backend, Terminal};
 
-use crate::{state::State, ui::ui};
+use crate::{state::{Sorting, State}, ui::ui};
 
 pub struct App {
     pub state: State,
@@ -46,6 +46,10 @@ impl App {
                             KeyCode::Left => self.state.unselect_process(),
                             KeyCode::Down => self.state.next_process(),
                             KeyCode::Up => self.state.previous_process(),
+                            KeyCode::Char('m') => self.state.sorting = Sorting::Memory,
+                            KeyCode::Char('p') => self.state.sorting = Sorting::Processor,
+                            KeyCode::Char('d') => self.state.sorting = Sorting::Disk,
+                            KeyCode::Char('n') => self.state.sorting = Sorting::None,
                             _ => {}
                         }
                     }

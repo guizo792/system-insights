@@ -5,7 +5,7 @@ use tui::{
     widgets::{Block, Borders, Cell, Row, Table},
 };
 
-use crate::state::State;
+use crate::state::{Sorting, State};
 
 pub fn process_list(state: &mut State) -> Table {
     let selected_style = Style::default().bg(Color::White).fg(Color::Black);
@@ -37,7 +37,39 @@ pub fn process_list(state: &mut State) -> Table {
 
     let header = Row::new(header_cells).height(1).bottom_margin(1);
 
-    let rows = state.system.processes().iter().map(|item| {
+    // Collect processes into a vector and sort them based on the current sorting state
+    let mut processes: Vec<(_, _)> = state.system.processes().into_iter().collect();
+    match state.sorting {
+        Sorting::Memory => {
+            // Sorting by memory usage
+            processes.sort_by(|a, b| {
+                let ram_a = a.1.memory() as f64 / 1024.0 / 1024.0;
+                let ram_b = b.1.memory() as f64 / 1024.0 / 1024.0;
+                ram_b.partial_cmp(&ram_a).unwrap_or(std::cmp::Ordering::Equal)
+            });
+        }
+        Sorting::Processor => {
+            // Sorting by processor usage
+            processes.sort_by(|a, b| {
+                let cpu_a = a.1.cpu_usage() / state.system.cpus().len() as f32;
+                let cpu_b = b.1.cpu_usage() / state.system.cpus().len() as f32;
+                cpu_b.partial_cmp(&cpu_a).unwrap_or(std::cmp::Ordering::Equal)
+            });
+        }
+        Sorting::Disk => {
+            // Sorting by disk usage
+            processes.sort_by(|a, b| {
+                let disk_a = (a.1.disk_usage().read_bytes + a.1.disk_usage().written_bytes) as f64 / 1024.0 / 1024.0;
+                let disk_b = (b.1.disk_usage().read_bytes + b.1.disk_usage().written_bytes) as f64 / 1024.0 / 1024.0;
+                disk_b.partial_cmp(&disk_a).unwrap_or(std::cmp::Ordering::Equal)
+            });
+        }
+        Sorting::None => {
+            // No sorting, use the default order
+        }
+    }
+
+    let rows = processes.iter().map(|item| {
         let process = item.1;
 
         let name = process.name();

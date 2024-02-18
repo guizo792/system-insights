@@ -1,9 +1,18 @@
 use sysinfo::{System, SystemExt};
 use tui::widgets::TableState;
 
+#[derive(PartialEq, Eq, Clone, Copy)]
+pub enum Sorting {
+    None,
+    Memory,
+    Processor,
+    Disk
+}
+
 pub struct State {
     pub selected_process: TableState,
     pub system: System,
+    pub sorting: Sorting,
 }
 
 impl State {
@@ -11,6 +20,7 @@ impl State {
         State {
             selected_process: TableState::default(),
             system,
+            sorting: Sorting::Memory,
         }
     }
 

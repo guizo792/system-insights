@@ -86,7 +86,7 @@ pub fn ui<B: Backend>(f: &mut Frame<B>, app: &mut App) {
 
     // Controls
     let controls_area = Block::default().title(vec![Span::from(
-        "[q]Press 'q' to quit",
+        "[q]quit [⬆ ⬇]navigate  |  SORT BY: [m]memory [p]cpu [d]disk [n]none",
     )]);
     f.render_widget(controls_area, bottom_left);
 
